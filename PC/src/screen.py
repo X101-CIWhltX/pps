@@ -1,6 +1,7 @@
 import pygame
 
 from prey import Prey
+import prey as p
 
 class Screen:
 	def __init__(self, width_screen=500, height_screen=500):
@@ -40,6 +41,12 @@ class Screen:
 
 			for prey in self.preys:	
 				prey.next_iteration()
+
+				# We limit the amount of preys to the value MAX_PREYS
+				if(prey.time_to_div() and len(self.preys) <= p.MAX_PREYS):
+					new_prey = Prey(self.width_screen, self.height_screen)
+					new_prey.set_pos(prey.get_pos())
+					self.preys.append(new_prey)
 
 			pygame.display.flip()
 
