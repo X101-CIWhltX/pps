@@ -8,10 +8,13 @@ public class Probablities {
     static {
         rnd = new Random(System.nanoTime());
     }
+
+    // Returns a number from a uniform distribution from min to max
     public static double unifrom_distribution(double min, double max) {
         return min + (max - min) * rnd.nextDouble();
     }
 
+    // We calculate the new direction of movement based on the probability of maintaining the previous direction of movement
     public static int max_random_choice(double max_p) {
         double val = rnd.nextDouble();
         if(val < max_p)

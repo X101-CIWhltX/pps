@@ -4,24 +4,24 @@ import random
 
 trigonometry_const = math.sqrt(3)/2
 
-X0_vector = (1, 0)
-X1_vector = (trigonometry_const, 0.5)
-X2_vector = (0.5, trigonometry_const)
-X3_vector = (0, 1)
-X4_vector = (-0.5, trigonometry_const)
-X5_vector = (-1*trigonometry_const, 0.5)
-X6_vector = (-1, 0)
-X7_vector = (-1*trigonometry_const, -0.5)
-X8_vector = (-0.5, -1*trigonometry_const)
-X9_vector = (0, -1)
-X10_vector = (0.5, -1*trigonometry_const)
-X11_vector = (trigonometry_const, -0.5)
+X0_vector = (1, 0)                               # 0   grade`s
+X1_vector = (trigonometry_const, 0.5)            # 30  grade`s
+X2_vector = (0.5, trigonometry_const)            # 60  grade`s
+X3_vector = (0, 1)                               # 90  grade`s
+X4_vector = (-0.5, trigonometry_const)           # 120 grade`s
+X5_vector = (-1*trigonometry_const, 0.5)         # 150 grade`s
+X6_vector = (-1, 0)                              # 180 grade`s
+X7_vector = (-1*trigonometry_const, -0.5)        # 210 grade`s
+X8_vector = (-0.5, -1*trigonometry_const)        # 240 grade`s
+X9_vector = (0, -1)                              # 270 grade`s
+X10_vector = (0.5, -1*trigonometry_const)        # 300 grade`s
+X11_vector = (trigonometry_const, -0.5)          # 330 grade`s
 
 X_vectors = (X0_vector, X1_vector, X2_vector, X3_vector,
 	X4_vector, X5_vector, X6_vector, X7_vector, X8_vector,
 	X9_vector, X10_vector, X11_vector)
 
-vectors_modulo = len(X_vectors)
+vectors_modulo = len(X_vectors)  # 12 vector`s from 0 to 11
 
 velocity_norm = 2
 
@@ -31,45 +31,58 @@ class Prey:
 		self.x_max = x_max
 		self.y_max = y_max
 
+		# 0.95 - the probability of maintaining the direction, 0.03/6 - the probability of a change of direction
 		self.velocity_probabilities = [0.97, 0.03/6, 0.03/6, 0.03/6, 0.03/6, 0.03/6, 0.03/6]
 
-		self.x_position = np.random.uniform(0, x_max, size=(1,))[0]
-		self.y_position = np.random.uniform(0, y_max, size=(1,))[0]
-
-		vector_offset = random.randint(0, vectors_modulo-1)
+		# The starting position is set according to a uniform distribution
+		x_position = np.random.uniform(0, x_max, size=(1,))[0]
+		y_position = np.random.uniform(0, y_max, size=(1,))[0]
+		self.position = [x_position, y_position]
 
 		self.bound = 5
 
-		self.velocity = X_vectors[vector_offset]
+		# The starting velocity is set with random direction
+		self.current_X = random.randint(0, vectors_modulo-1)
+		self.velocity = X_vectors[self.current_X]
 
-		self.x_position += velocity_norm*self.velocity[0]
-		self.y_position += velocity_norm*self.velocity[1]
+		self.position[0] += velocity_norm*self.velocity[0]
+		self.position[1] += velocity_norm*self.velocity[1]
 
 	def next_iteration(self):
-		index_X = 0
-
-		if (self.x_position < self.bound):
-			index_X = random.randint(-2, 2)
-			self.velocity = X_vectors[index_X]
-		elif (self.x_max - self.x_position < self.bound):
-			index_X = random.randint(4, 8)
-			self.velocity = X_vectors[index_X]
-		elif (self.y_position < self.bound):
-			index_X = random.randint(1, 5)
-			self.velocity = X_vectors[index_X]
-		elif (self.y_max - self.y_position < self.bound):
-			index_X = random.randint(7, 11)
-			self.velocity = X_vectors[index_X]
+		# If the prey reaches one of the edges of the map, then we change its direction of movement from the edge of the map
+		if (self.position[0] < self.bound):
+			self.current_X = random.randint(-2, 2)
+			self.velocity = X_vectors[self.current_X]
+		elif (self.x_max - self.position[0] < self.bound):
+			self.current_X = random.randint(4, 8)
+			self.velocity = X_vectors[self.current_X]
+		elif (self.position[1] < self.bound):
+			self.current_X = random.randint(1, 5)
+			self.velocity = X_vectors[self.current_X]
+		elif (self.y_max - self.position[1] < self.bound):
+			self.current_X = random.randint(7, 11)
+			self.velocity = X_vectors[self.current_X]
 		else:
+			# With a probability of 0.95, the prey will not change its direction of movement,
+			# and with a probability of 0.05, the prey may change its direction of movement by 30 or 60 degrees
 			vector_offset = np.random.choice(list(range(0, 7)), 1, p=self.velocity_probabilities)[0]
+
+			# 0 - turn by 0 degrees 
+			# 1 - turn by 30 degrees counterclockwise
+			# 2 - turn by 60 degrees counterclockwise
+			# 3 - turn by 90 degrees counterclockwise
+			# 4 (= -3) - turn by 30 degrees clockwise
+			# 5 (= -2) - turn by 60 degrees clockwise
+			# 6 (= -1) - turn by 90 degrees clockwise
 			if(vector_offset > 3):
 				vector_offset -= 7
-			self.velocity = X_vectors[(X_vectors.index(self.velocity) + vector_offset) % vectors_modulo]
+			self.current_X = (self.current_X + vector_offset) % vectors_modulo
 
-		self.x_position += velocity_norm*self.velocity[0]
-		self.y_position += velocity_norm*self.velocity[1]
+			self.velocity = X_vectors[self.current_X]
+
+		self.position[0] += velocity_norm*self.velocity[0]
+		self.position[1] += velocity_norm*self.velocity[1]
 
 
 	def get_pos(self):
-		return (self.x_position, self.y_position)
-
+		return (self.position[0], self.position[1])

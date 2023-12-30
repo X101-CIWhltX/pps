@@ -10,20 +10,18 @@ class Screen:
 		self.clock = pygame.time.Clock()
 
 		pygame.init()
-
 		self.screen = pygame.display.set_mode((width_screen, height_screen))
 
 		self.running = True
 
 		self.preys = []
+		self.count_preys = 5
 
-		for i in range(100):
+		for i in range(self.count_preys):
 			prey = Prey(width_screen, height_screen)
 			self.preys.append(prey)
 
-
 		self.circles_r = 3
-		self.count = 0
 
 		self.main_loop()
 
@@ -31,19 +29,21 @@ class Screen:
 
 	def main_loop(self):
 		while self.running:
-
 			self.event_handler()
 
+			# white screen
 			self.screen.fill((255, 255, 255))
 
+			# Drawing all preys
 			for prey in self.preys:
-				pygame.draw.circle(self.screen, (0, 255, 0),prey.get_pos(), self.circles_r)
+				pygame.draw.circle(self.screen, (0, 255, 0), prey.get_pos(), self.circles_r)
 
 			for prey in self.preys:	
 				prey.next_iteration()
 
-
 			pygame.display.flip()
+
+			# set 60 fps
 			self.clock.tick(60)
 
 	def event_handler(self):

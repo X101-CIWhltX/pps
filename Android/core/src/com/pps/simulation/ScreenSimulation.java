@@ -24,9 +24,11 @@ public class ScreenSimulation extends ApplicationAdapter {
 
     @Override
     public void render() {
+        // white screen
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        // Drawing all preys
         for (Prey prey : preys) {
             pos = prey.get_pos();
             shr.begin(ShapeRenderer.ShapeType.Filled);
