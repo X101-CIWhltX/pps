@@ -16,7 +16,7 @@ public class Prey {
     public static int MAX_preys;
     private int part_cycle;
     private double[] velocity;
-    private double x_max, y_max;
+    private int x_max, y_max;
     private Random prey_rnd;
     private double[] position;
     private int current_X;
@@ -50,7 +50,7 @@ public class Prey {
         MAX_preys = 150;
     }
 
-    public Prey(double x_max, double y_max) {
+    public Prey(int x_max, int y_max) {
         this.x_max = x_max;
         this.y_max = y_max;
 

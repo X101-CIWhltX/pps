@@ -14,6 +14,10 @@ public class Probablities {
         return min + (max - min) * rnd.nextDouble();
     }
 
+    public static double unifrom_distribution(int min, int max) {
+        return min + (max - min) * rnd.nextDouble();
+    }
+
     // We calculate the new direction of movement based on the probability of maintaining the previous direction of movement
     public static int max_random_choice(double max_p) {
         double val = rnd.nextDouble();
