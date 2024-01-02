@@ -1,6 +1,6 @@
 import pygame
 
-from life_simulation import Life
+from life import Life
 
 class Screen:
 	def __init__(self, width_screen=500, height_screen=500):
@@ -30,9 +30,14 @@ class Screen:
 			self.screen.fill((255, 255, 255))
 
 			preys_coordinates = self.life.get_preys_position()
+			predators_coordinates = self.life.get_predators_position()
+
 			# Drawing all preys
 			for coordinates in preys_coordinates:
 				pygame.draw.circle(self.screen, (0, 255, 0), coordinates, self.circles_r)
+
+			for coordinates in predators_coordinates:
+				pygame.draw.circle(self.screen, (255, 0, 0), coordinates, self.circles_r)
 
 			self.life.next_life_iteration()
 
